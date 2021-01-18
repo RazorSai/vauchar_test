@@ -4,6 +4,9 @@ import 'package:vauchar_test/create_event/controller/create_event_screen.dart';
 import 'package:vauchar_test/event_list/bloc/event_list_bloc.dart';
 import 'package:vauchar_test/event_list/model/events_model.dart';
 import 'package:vauchar_test/global/global.dart';
+import 'package:vauchar_test/global/helper/shared_preference_helper.dart';
+import 'package:vauchar_test/login/controller/login.dart';
+import 'package:vauchar_test/services/service_locator.dart';
 
 class EventListScreen extends StatefulWidget {
   @override
@@ -13,6 +16,8 @@ class EventListScreen extends StatefulWidget {
 class _EventListScreenState extends State<EventListScreen> {
 
   EventListBloc _eventListBloc;
+
+  SharedPreferenceHelper _sharedPreferenceHelper = locator<SharedPreferenceHelper>();
 
   List<EventsModel> eventsList = List();
 
@@ -39,6 +44,12 @@ class _EventListScreenState extends State<EventListScreen> {
             icon: Icon(Icons.filter_alt, color: Colors.white),
             onPressed: (){
               filterDialog(context);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.white),
+            onPressed: (){
+              logout(context);
             },
           )
         ],
@@ -219,6 +230,13 @@ class _EventListScreenState extends State<EventListScreen> {
         return CreateEventScreen();
       }
     )).then((value) => getEvents());
+  }
+
+  logout(BuildContext context){
+    _sharedPreferenceHelper.saveBool("is_active", false);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_){
+      return LoginScreen();
+    }), (route) => false);
   }
 
   @override
